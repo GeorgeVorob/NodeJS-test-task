@@ -1,5 +1,5 @@
 export class Tag {
-    uid: number;
+    id: number;
     creator: number;
     name: string;
     sortOrder: number;
@@ -8,11 +8,11 @@ export class Tag {
         _creator: number,
         _name: string,
         _sortOrder: number = 0,
-        _uid: number,
+        _id: number,
     ) {
         this.creator = _creator;
         this.name = _name;
         this.sortOrder = _sortOrder;
-        this.uid = _uid;
+        this.id = _id;
     }
 }

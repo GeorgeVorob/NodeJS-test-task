@@ -1,6 +1,6 @@
 import { UserFromClientDTO } from "../DTOs/UserFromClientDTO"
 
-//Проверяет переданный DTO пользователя на корректность содержимых данных.
+//Проверяет переданный DTO пользователя на корректность хранимых данных.
 export function IsUserDataValid(userInfo: UserFromClientDTO): string {
     var err: string = "";
 

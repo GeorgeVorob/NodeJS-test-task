@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "server": "node dist/app.js"
+    "server": "node dist/app.js",
+    "migrate": "npm run build && node dist/src/Model/dbMigrations/Migrator.js"
   },
   "repository": {
     "type": "git",

@@ -1,5 +1,5 @@
 export class User {
-    uid: number;
+    uid: string;
     email: string;
     password: string;
     nickname: string;
@@ -8,7 +8,7 @@ export class User {
         _email: string,
         _password: string,
         _nickname: string,
-        _uid: number,
+        _uid: string,
     ) {
         this.email = _email;
         this.password = _password;
