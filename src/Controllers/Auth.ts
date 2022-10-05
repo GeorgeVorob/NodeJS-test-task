@@ -3,7 +3,7 @@ import { CreateToken } from "../Helpers/CreateTokenHelper";
 import { TokenToUserDTO } from "../Model/DTOs/TokenToUserDTO";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
 
-import { AddUser } from "../UseCases/AuthCases";
+import { RegisterUserCase } from "../UseCases/AuthCases";
 
 export const UseAuth = (app: Express): void => {
 
@@ -11,7 +11,7 @@ export const UseAuth = (app: Express): void => {
     app.post('/signin', (req: Request, res: Response) => {
         let data: UserFromClientDTO = req.body;
 
-        AddUser(data)
+        RegisterUserCase(data)
             //FIXME: Это точно должно быть в контроллере?
             .then(() => {
                 let tokenStr = CreateToken(data.email);
@@ -25,6 +25,8 @@ export const UseAuth = (app: Express): void => {
             })
             .catch(err => {
                 res.statusCode = 400;
+                //FIXME: Даже внутрнние исключения от слоя с данными всплывают сюда.
+                // Некрасиво, возможно небезопасно. Вместо них стоит как-то возвращать более осмысленные собщения.
                 res.json({ message: err.message });
             });
     });

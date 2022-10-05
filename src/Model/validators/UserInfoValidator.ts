@@ -2,7 +2,7 @@ import { UserFromClientDTO } from "../DTOs/UserFromClientDTO"
 
 //Проверяет переданный DTO пользователя на корректность хранимых данных.
 //TODO: Добавить инструмент для валидации вместо этого самописного ужаса.
-export function UserInfoValidator(
+export function ValidateUserInfo(
     userInfo: UserFromClientDTO,
     ignoreEmptyFields: boolean = false): void {
     if (userInfo) {

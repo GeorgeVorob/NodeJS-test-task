@@ -1,7 +1,9 @@
+import { UserRepository } from "../DataAccessLayer/UserRepository";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
-import { UserInfoValidator } from "../Model/validators/UserInfoValidator";
+import { ValidateUserInfo } from "../Model/validators/UserInfoValidator";
 
-//Валидирует данные и создает нового пользователя.
-export const AddUser = async (userData: UserFromClientDTO): Promise<void> => {
-    UserInfoValidator(userData);
+// Валидирует данные и регистрирует нового пользователя.
+export const RegisterUserCase = async (userData: UserFromClientDTO): Promise<void> => {
+    ValidateUserInfo(userData);
+    await UserRepository.AddUser(userData);
 }
