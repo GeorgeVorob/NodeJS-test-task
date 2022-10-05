@@ -1,7 +1,8 @@
 import { Express, Request, Response } from "express"
-import { CreateToken, CreateTokenDTO } from "../Helpers/CreateTokenHelper";
+import { CheckToken } from "../MIddlewares/CheckToken";
 import { TokenToUserDTO } from "../Model/DTOs/TokenToUserDTO";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
+import { JWTService } from "../Services/JWTService";
 
 import { LogInUserCase, RegisterUserCase } from "../UseCases/AuthCases";
 
@@ -15,7 +16,7 @@ export const UseAuth = (app: Express): void => {
             //FIXME: Это точно должно быть в контроллере?
             .then(() => {
                 res.statusCode = 200;
-                res.json(CreateTokenDTO(data.email));
+                res.json(JWTService.CreateTokenDTO(data.email));
             })
             .catch(err => {
                 res.statusCode = 400;
@@ -31,12 +32,18 @@ export const UseAuth = (app: Express): void => {
         LogInUserCase(data)
             .then(() => {
                 res.statusCode = 200;
-                res.json(CreateTokenDTO(data.email));
+                res.json(JWTService.CreateTokenDTO(data.email));
             })
             .catch(err => {
                 res.statusCode = 400;
                 res.json({ message: err.message });
             });
+    });
+
+    //Разлогинивает пользователя, инвалидируя его текущий токен.
+    app.post('/logout', CheckToken, (req: Request, res: Response) => {
+        JWTService.InvalidateToken((req as any).token);
+        res.sendStatus(200);
     });
 
 }
