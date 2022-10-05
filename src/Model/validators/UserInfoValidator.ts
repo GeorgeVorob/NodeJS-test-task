@@ -1,35 +1,43 @@
 import { UserFromClientDTO } from "../DTOs/UserFromClientDTO"
 
 //Проверяет переданный DTO пользователя на корректность хранимых данных.
-export function IsUserDataValid(userInfo: UserFromClientDTO): string {
-    var err: string = "";
+//TODO: Добавить инструмент для валидации вместо этого самописного ужаса.
+export function UserInfoValidator(
+    userInfo: UserFromClientDTO,
+    ignoreEmptyFields: boolean = false): void {
+    if (userInfo) {
 
-    if (userInfo.email.length > 100) {
-        err = "Email is too long! Max length: 100.";
-        return err;
-    }
+        if (userInfo.email) {
 
-    if (userInfo.password.length > 100) {
-        err = "Password is too long! Max length: 100.";
-        return err;
-    }
-    if (!(/\d/.test(userInfo.password))) {
-        err = "Password must contain at least one number!";
-        return err;
-    }
-    if (userInfo.password.toUpperCase() === userInfo.password) {
-        err = "Password must contain at least one lower case letter!";
-        return err;
-    }
-    if (userInfo.password.toLowerCase() === userInfo.password) {
-        err = "Password must contain at least one upper case letter!";
-        return err;
-    }
+            if (userInfo.email.length > 100) {
+                throw new Error("Email is too long! Max length: 100.");
+            }
 
-    if (userInfo.nickname.length > 30) {
-        err = "Nickname is too long! Max length: 30";
-        return err;
-    }
+        } else
+            if (!ignoreEmptyFields) throw new Error("Email must be provided!");
 
-    return err;
+        if (userInfo.password) {
+
+            if (userInfo.password.length > 100) {
+                throw new Error("Password is too long! Max length: 100.");
+            }
+            if (!(/\d/.test(userInfo.password))) {
+                throw new Error("Password must contain at least one number!");
+            }
+            if (userInfo.password.toUpperCase() === userInfo.password) {
+                throw new Error("Password must contain at least one lower case letter!");
+            }
+            if (userInfo.password.toLowerCase() === userInfo.password) {
+                throw new Error("Password must contain at least one upper case letter!");
+            }
+
+        } else if (!ignoreEmptyFields) throw new Error("Password must be provided!");
+
+        if (userInfo.nickname) {
+            if (userInfo.nickname.length > 30) {
+                throw new Error("Nickname is too long! Max length: 30");
+            }
+        } else if (!ignoreEmptyFields) throw new Error("Nickname must be provided!");
+
+    } else if (!ignoreEmptyFields) throw new Error("No data provided!");
 }
