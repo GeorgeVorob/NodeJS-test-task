@@ -6,13 +6,14 @@ import { UserToClientDTO } from "../Model/DTOs/UserToClientDTO";
 import { Tag } from "../Model/models/tag";
 import { User } from "../Model/models/user"
 import { ValidateUserInfo } from "../Model/validators/UserInfoValidator";
+import { JWTService } from "../Services/JWTService";
 
-export const GetUserCase = async (UserEmail: string): Promise<UserToClientDTO> => {
+export const GetUserCase = async (UserUid: string): Promise<UserToClientDTO> => {
     var user: User;
     var tags: Tag[] = [];
     var responseDTO: UserToClientDTO;
 
-    await UserRepository.FindUserExact({ email: UserEmail })
+    await UserRepository.FindUserExact({ uid: UserUid })
         .then(usr => {
             if (!usr)
                 throw new Error('No such user');
@@ -64,4 +65,9 @@ export const UpdateUserCase = async (newUserInfo: UserFromClientDTO, userToUpdat
     await UserRepository.FindUserExact({ uid: userToUpdateUid }).then((res) => { updatedUser = res });
 
     return { email: updatedUser!.email, nickname: updatedUser!.nickname };
+}
+
+export const DeleteUserCase = async (uidToDelete: string, tokenToInvalidate: string): Promise<void> => {
+    await UserRepository.DeleteUser(uidToDelete);
+    JWTService.InvalidateToken(tokenToInvalidate);
 }

@@ -87,4 +87,11 @@ export class UserRepository {
 
         await Db.Query(query, params);
     }
+
+    public static async DeleteUser(userToDelete: User | string): Promise<void> {
+        let uidToDelete = userToDelete instanceof User ? userToDelete.uid : userToDelete;
+        let query: string = "DELETE FROM users WHERE uid=$1;";
+
+        await Db.Query(query, [uidToDelete]);
+    }
 }

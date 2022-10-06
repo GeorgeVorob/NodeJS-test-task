@@ -4,7 +4,7 @@ import { UpdatedUserToClientDTO } from "../Model/DTOs/UpdatedUserToClientDTO";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
 import { UserToClientDTO } from "../Model/DTOs/UserToClientDTO";
 import { User } from "../Model/models/user";
-import { GetUserCase, UpdateUserCase } from "../UseCases/UserCases";
+import { DeleteUserCase, GetUserCase, UpdateUserCase } from "../UseCases/UserCases";
 
 export const UseUsers = (app: Express): void => {
     app.get('/user', CheckToken, (req: Request, res: Response) => {
@@ -29,6 +29,17 @@ export const UseUsers = (app: Express): void => {
         UpdateUserCase(req.body, (req as any).tokenData.data)
             .then((result: UpdatedUserToClientDTO) => {
                 res.json(result);
+            })
+            .catch((err: Error) => {
+                res.statusCode = 400;
+                res.json({ message: err.message });
+            })
+    })
+
+    app.delete('/user', CheckToken, (req: Request, res: Response) => {
+        DeleteUserCase((req as any).tokenData.data, (req as any).token)
+            .then(() => {
+                res.sendStatus(200);
             })
             .catch((err: Error) => {
                 res.statusCode = 400;
