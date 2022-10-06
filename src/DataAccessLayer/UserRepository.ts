@@ -18,15 +18,26 @@ export class UserRepository {
     };
 
     // Находит пользователя при точном соответствии переданных данных.
-    public static async FindUserExact(userData: UserFromClientDTO): Promise<User | null> {
+    public static async FindUserExact(
+        userData: {
+            uid?: string,
+            email?: string,
+            password?: string,
+            nickname?: string
+        }
+    ): Promise<User | null> {
         let query: string;
         let params: string[] = [];
         query = "SELECT * FROM users";
-        if (userData && (userData.email || userData.nickname || userData.password)) {
-            query += " WHERE";
+        if (userData && (userData.email || userData.nickname || userData.password || userData.uid)) {
+            query += " WHERE 1=1";
 
+            if (userData.uid) {
+                query += ` AND uid = \$${params.length + 1}`
+                params.push(userData.uid);
+            }
             if (userData.email) {
-                query += ` email = \$${params.length + 1}`
+                query += ` AND email = \$${params.length + 1}`
                 params.push(userData.email);
             }
             if (userData.password) {
@@ -46,5 +57,34 @@ export class UserRepository {
                     return res.rows[0]
                 else return null;
             });
+    }
+
+    public static async UpdateUser(newData: UserFromClientDTO, uid: string): Promise<void> {
+        let query: string = "UPDATE users";
+        let params: string[] = [];
+
+        //FIXME: Костыль. Корректная комманда требует хотя-бы одного SET.
+        query += ` SET uid='${uid}'`;
+
+        if (newData && (newData.email || newData.nickname || newData.password)) {
+
+            if (newData.email) {
+                query += `, email = \$${params.length + 1}`
+                params.push(newData.email);
+            }
+            if (newData.password) {
+                query += `, password = \$${params.length + 1}`
+                params.push(newData.password);
+            }
+            if (newData.nickname) {
+                query += `, nickname = \$${params.length + 1}`
+                params.push(newData.nickname);
+            }
+        }
+
+        query += ` WHERE uid='${uid}'`
+        query += ";";
+
+        await Db.Query(query, params);
     }
 }

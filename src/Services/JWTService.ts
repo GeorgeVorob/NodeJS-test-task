@@ -27,7 +27,7 @@ export class JWTService {
     }
 
     // Возвращает новый токен.
-    public static readonly CreateToken = (data: any): string => {
+    public static readonly CreateToken = (data: string): string => {
         return jwt.sign(
             { data: data },
             process.env.JWT_KEY as string,
@@ -37,7 +37,7 @@ export class JWTService {
     }
 
     // Возвращает новый токен в формате DTO для отправки клиенту.
-    public static readonly CreateTokenDTO = (data: any): TokenToUserDTO => {
+    public static readonly CreateTokenDTO = (data: string): TokenToUserDTO => {
         return {
             token: JWTService.CreateToken(data),
             expire: parseInt(process.env.JWT_TOKEN_LIFETIME_SECONDS as string)
