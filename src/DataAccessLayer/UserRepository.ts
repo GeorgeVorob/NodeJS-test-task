@@ -14,8 +14,8 @@ export class UserRepository {
             userData.nickname])
     };
 
-    // Находит всех пользователей при точном соответствии переданных данных.
-    public static async FindUserExact(userData: UserFromClientDTO): Promise<User[]> {
+    // Находит пользователя при точном соответствии переданных данных.
+    public static async FindUserExact(userData: UserFromClientDTO): Promise<User | null> {
         let query: string;
         let params: string[] = [];
         query = "SELECT * FROM users";
@@ -39,7 +39,9 @@ export class UserRepository {
         query += ";";
         return Db.Query(query, params)
             .then((res: QueryResult<any>) => {
-                return res.rows as User[];
+                if (res && res.rows && res.rows[0])
+                    return res.rows[0]
+                else return null;
             });
     }
 }

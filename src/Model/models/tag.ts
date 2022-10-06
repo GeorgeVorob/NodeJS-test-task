@@ -2,7 +2,7 @@ export class Tag {
     id: number;
     creator: number;
     name: string;
-    sortOrder: number;
+    sortorder: number;
 
     public constructor(
         _creator: number,
@@ -12,7 +12,7 @@ export class Tag {
     ) {
         this.creator = _creator;
         this.name = _name;
-        this.sortOrder = _sortOrder;
+        this.sortorder = _sortOrder;
         this.id = _id;
     }
 }

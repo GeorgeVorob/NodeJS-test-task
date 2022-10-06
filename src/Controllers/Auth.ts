@@ -1,6 +1,5 @@
 import { Express, Request, Response } from "express"
 import { CheckToken } from "../MIddlewares/CheckToken";
-import { TokenToUserDTO } from "../Model/DTOs/TokenToUserDTO";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
 import { JWTService } from "../Services/JWTService";
 
@@ -21,7 +20,7 @@ export const UseAuth = (app: Express): void => {
             .catch(err => {
                 res.statusCode = 400;
                 //FIXME: Даже внутрнние исключения от слоя с данными всплывают сюда.
-                // Некрасиво, возможно небезопасно. Вместо них стоит как-то возвращать более осмысленные собщения.
+                // Некрасиво, возможно небезопасно. Вместо них стоит как-то возвращать более осмысленные сообщения.
                 res.json({ message: err.message });
             });
     });

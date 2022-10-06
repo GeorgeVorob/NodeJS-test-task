@@ -9,7 +9,7 @@ export const RegisterUserCase = async (userData: UserFromClientDTO): Promise<voi
     await UserRepository.AddUser(userData);
 }
 
-// Ищет пользователя
+// Ищет пользователя по почте и паролю. Выдает исключение, если не находит пользователя.
 export const LogInUserCase = async (userData: UserFromClientDTO): Promise<void> => {
     userData.nickname = undefined;
 
@@ -19,10 +19,8 @@ export const LogInUserCase = async (userData: UserFromClientDTO): Promise<void> 
         throw new Error("No password provided!");
 
     UserRepository.FindUserExact(userData)
-        .then((result: User[]) => {
-            if (result.length < 1)
+        .then((result: User | null) => {
+            if (!result)
                 throw new Error("No such user");
-            if (result.length > 1)
-                console.warn("Duplicate user info in db!?")
         })
 }
