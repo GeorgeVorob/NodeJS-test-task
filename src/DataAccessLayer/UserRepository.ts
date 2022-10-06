@@ -6,12 +6,15 @@ import { Db } from "./Db";
 // Класс для работы с сущностями пользователей в базе данных.
 export class UserRepository {
 
-    public static async AddUser(userData: UserFromClientDTO): Promise<void> {
-        await Db.Query(
-            "INSERT INTO users (email, password, nickname) VALUES ($1,$2,$3);",
+    public static async AddUser(userData: UserFromClientDTO): Promise<User> {
+        return Db.Query(
+            "INSERT INTO users (email, password, nickname) VALUES ($1,$2,$3) RETURNING uid, email, password, nickname;",
             [userData.email,
             userData.password,
             userData.nickname])
+            .then((res: QueryResult<any>) => {
+                return res.rows[0] as User;
+            })
     };
 
     // Находит пользователя при точном соответствии переданных данных.

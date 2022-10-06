@@ -11,11 +11,9 @@ export const UseAuth = (app: Express): void => {
     app.post('/signin', (req: Request, res: Response) => {
         let data: UserFromClientDTO = req.body;
         RegisterUserCase(data)
-
-            //FIXME: Это точно должно быть в контроллере?
-            .then(() => {
+            .then((result) => {
                 res.statusCode = 200;
-                res.json(JWTService.CreateTokenDTO(data.email));
+                res.json(result);
             })
             .catch(err => {
                 res.statusCode = 400;
@@ -29,9 +27,9 @@ export const UseAuth = (app: Express): void => {
     app.post('/login', (req: Request, res: Response) => {
         let data: UserFromClientDTO = req.body;
         LogInUserCase(data)
-            .then(() => {
+            .then((result) => {
                 res.statusCode = 200;
-                res.json(JWTService.CreateTokenDTO(data.email));
+                res.json(result);
             })
             .catch(err => {
                 res.statusCode = 400;
