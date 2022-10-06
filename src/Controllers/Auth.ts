@@ -1,6 +1,5 @@
 import { Express, Request, Response } from "express"
 import { CheckToken } from "../MIddlewares/CheckToken";
-import { TokenToUserDTO } from "../Model/DTOs/TokenToUserDTO";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
 import { JWTService } from "../Services/JWTService";
 
@@ -12,16 +11,14 @@ export const UseAuth = (app: Express): void => {
     app.post('/signin', (req: Request, res: Response) => {
         let data: UserFromClientDTO = req.body;
         RegisterUserCase(data)
-
-            //FIXME: Это точно должно быть в контроллере?
-            .then(() => {
+            .then((result) => {
                 res.statusCode = 200;
-                res.json(JWTService.CreateTokenDTO(data.email));
+                res.json(result);
             })
             .catch(err => {
                 res.statusCode = 400;
                 //FIXME: Даже внутрнние исключения от слоя с данными всплывают сюда.
-                // Некрасиво, возможно небезопасно. Вместо них стоит как-то возвращать более осмысленные собщения.
+                // Некрасиво, возможно небезопасно. Вместо них стоит как-то возвращать более осмысленные сообщения.
                 res.json({ message: err.message });
             });
     });
@@ -30,9 +27,9 @@ export const UseAuth = (app: Express): void => {
     app.post('/login', (req: Request, res: Response) => {
         let data: UserFromClientDTO = req.body;
         LogInUserCase(data)
-            .then(() => {
+            .then((result) => {
                 res.statusCode = 200;
-                res.json(JWTService.CreateTokenDTO(data.email));
+                res.json(result);
             })
             .catch(err => {
                 res.statusCode = 400;

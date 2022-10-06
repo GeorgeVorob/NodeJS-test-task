@@ -1,12 +1,12 @@
 import { TokenToUserDTO } from "../Model/DTOs/TokenToUserDTO";
 import * as jwt from "jsonwebtoken";
 
-// Мне не удалось скачать 4 мегабайта сервера Redis, поэтому тут самопиская реализация!
+// Мне не удалось скачать 4 мегабайта сервера Redis, поэтому тут самописная реализация!
 //TODO: Переписать с использоанием Redis.
 
 // Сервис для работы с токенами авторизации.
 // Создает новые токены и сохраняет в черный список те, что были отмечены как невалидные раньше своего времени жизни (напр. при логауте).
-// В проверке токенов также ссылается на черный список помимо валидности токена по тоаймеру.
+// В проверке токенов также ссылается на черный список помимо валидности токена по таймеру.
 // Черный список периодически очищается от токенов, которые вытекли по времени сами по себе.
 export class JWTService {
     private static timer: NodeJS.Timer = setInterval(() => JWTService.cleanupTokenBlacklist(), 60000);
@@ -27,7 +27,7 @@ export class JWTService {
     }
 
     // Возвращает новый токен.
-    public static readonly CreateToken = (data: any): string => {
+    public static readonly CreateToken = (data: string): string => {
         return jwt.sign(
             { data: data },
             process.env.JWT_KEY as string,
@@ -37,7 +37,7 @@ export class JWTService {
     }
 
     // Возвращает новый токен в формате DTO для отправки клиенту.
-    public static readonly CreateTokenDTO = (data: any): TokenToUserDTO => {
+    public static readonly CreateTokenDTO = (data: string): TokenToUserDTO => {
         return {
             token: JWTService.CreateToken(data),
             expire: parseInt(process.env.JWT_TOKEN_LIFETIME_SECONDS as string)

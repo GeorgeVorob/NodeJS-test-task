@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { UseAuth } from './src/Controllers/Auth';
+import { UseUsers } from './src/Controllers/Users';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 UseAuth(app);
+UseUsers(app);
 
 app.listen(port, () => {
     console.log(`Server is listening at http://${hostname}:${port}`);
