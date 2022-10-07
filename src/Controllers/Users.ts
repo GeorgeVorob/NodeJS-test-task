@@ -13,7 +13,7 @@ export const UseUsers = (app: Express): void => {
                 res.json(result);
             })
             .catch((err: Error) => {
-                res.statusCode = 403;
+                res.statusCode = 400;
                 res.json({ message: err.message });
             })
     })

@@ -8,7 +8,7 @@ export class UserRepository {
 
     public static async AddUser(userData: UserFromClientDTO): Promise<User> {
         return Db.Query(
-            "INSERT INTO users (email, password, nickname) VALUES ($1,$2,$3) RETURNING uid, email, password, nickname;",
+            "INSERT INTO users (email, password, nickname) VALUES ( $1 , $2 , $3 ) RETURNING uid, email, password, nickname;",
             [userData.email,
             userData.password,
             userData.nickname])
@@ -90,7 +90,7 @@ export class UserRepository {
 
     public static async DeleteUser(userToDelete: User | string): Promise<void> {
         let uidToDelete = userToDelete instanceof User ? userToDelete.uid : userToDelete;
-        let query: string = "DELETE FROM users WHERE uid=$1;";
+        let query: string = "DELETE FROM users WHERE uid= $1 ;";
 
         await Db.Query(query, [uidToDelete]);
     }
