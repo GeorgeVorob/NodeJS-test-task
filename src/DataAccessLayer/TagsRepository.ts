@@ -1,5 +1,7 @@
+import e from "express";
 import { QueryResult } from "pg";
 import { TagFromUserDTO } from "../Model/DTOs/TagFromUserDTO";
+import { TagSearchParams as TagSearchParams } from "../Model/DTOs/TagSearchParams";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
 import { Tag } from "../Model/models/tag";
 import { User } from "../Model/models/user";
@@ -45,6 +47,32 @@ export class TagsRepository {
                 return 1 as any;
             })
 
+    }
+
+    public static async GetTags(params: TagSearchParams): Promise<Tag[]> {
+        let query: string = "SELECT * FROM tags WHERE 1=1";
+        let queryParams: string[] = [];
+
+        if (params.SortByName) {
+            query += " ORDER BY name";
+        }
+        else if (params.sortByOrder) query += " ORDER BY sortorder";
+
+        if (params.length) {
+            query += ` LIMIT \$${queryParams.length + 1}`;
+            queryParams.push(params.length.toString());
+        }
+
+        if (params.offset) {
+            query += ` OFFSET \$${queryParams.length + 1}`;
+            queryParams.push(params.offset.toString());
+        }
+
+        query += " ;";
+        return Db.Query(query, queryParams)
+            .then((res: QueryResult<any>) => {
+                return res.rows as Tag[];
+            })
     }
 
 }

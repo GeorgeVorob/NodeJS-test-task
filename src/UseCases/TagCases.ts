@@ -8,6 +8,7 @@ import { UserToClientDTO } from "../Model/DTOs/UserToClientDTO";
 import { Tag } from "../Model/models/tag";
 import { FullTagToUserDTO } from "../Model/DTOs/FullTagToUserDTO";
 import { User } from "../Model/models/user";
+import { TagSearchParams } from "../Model/DTOs/TagSearchParams";
 
 export const CreateTagCase = async (newTag: TagFromUserDTO, creatorUid: string): Promise<NewTagToUserDTO> => {
     if (newTag.name.length > 40) throw new Error("Tag name is too long! Max: 40.");
@@ -40,4 +41,32 @@ export const GetTagByIdCase = async (tagId: number): Promise<FullTagToUserDTO | 
         name: foundTag.name,
         sortOrder: foundTag.sortorder
     }
+}
+
+export const GetTagsCase = async (params: TagSearchParams): Promise<FullTagToUserDTO[]> => {
+    let rawTags: Tag[] = [];
+    await TagsRepository.GetTags(params).then((res) => { rawTags = res; })
+
+    let userPromises: Promise<User | null>[] = rawTags.map(tag => {
+        var tagCreator: User;
+        return UserRepository.FindUserExact({ uid: tag.creator }).then((res) => {
+            return res;
+        })
+    })
+
+    let retval: FullTagToUserDTO[] = [];
+    await Promise.all(userPromises)
+        .then(users => {
+            return users.forEach((user, index) => {
+                retval.push(
+                    {
+                        name: rawTags[index].name,
+                        sortOrder: rawTags[index].sortorder,
+                        creator: user != null ? { uid: user.uid, nickname: user.nickname } : null
+                    }
+                );
+            });
+        })
+
+    return retval;
 }

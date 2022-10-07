@@ -1,6 +1,6 @@
 export class Tag {
     id: number;
-    creator: string;
+    creator?: string;
     name: string;
     sortorder: number;
 
