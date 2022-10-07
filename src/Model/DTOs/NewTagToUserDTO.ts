@@ -1,4 +1,4 @@
-export type TagToUserDTO = {
+export type NewTagToUserDTO = {
     id: number,
     name: string,
     sortorder: number

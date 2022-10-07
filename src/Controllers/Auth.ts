@@ -42,5 +42,4 @@ export const UseAuth = (app: Express): void => {
         JWTService.InvalidateToken((req as any).token);
         res.sendStatus(200);
     });
-
 }

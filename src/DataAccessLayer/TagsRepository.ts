@@ -21,6 +21,15 @@ export class TagsRepository {
             });
     }
 
+    public static async GetTagById(tagId: number): Promise<Tag | null> {
+        return Db.Query("SELECT * FROM tags WHERE tags.id = $1", [tagId])
+            .then((res => {
+                if (res.rows.length > 0)
+                    return res.rows[0] as Tag
+                else return null;
+            }));
+    }
+
     public static async CreateTag(tag: TagFromUserDTO, creatorUid: string): Promise<Tag> {
         if (!tag.sortOrder) tag.sortOrder = 0;
         let query: string = `INSERT INTO tags (creator, name, sortorder) 
