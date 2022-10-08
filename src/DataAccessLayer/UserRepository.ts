@@ -1,4 +1,5 @@
 import { QueryResult } from "pg";
+import { StringsEncryptHelper } from "../Helpers/StringsEncryptHelper";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
 import { User } from "../Model/models/user";
 import { Db } from "./Db";
@@ -10,7 +11,7 @@ export class UserRepository {
         return Db.Query(
             "INSERT INTO users (email, password, nickname) VALUES ( $1 , $2 , $3 ) RETURNING uid, email, password, nickname;",
             [userData.email,
-            userData.password,
+                StringsEncryptHelper.EncryptString(userData.password!),
             userData.nickname])
             .then((res: QueryResult<any>) => {
                 return res.rows[0] as User;
@@ -42,7 +43,7 @@ export class UserRepository {
             }
             if (userData.password) {
                 query += ` AND password = \$${params.length + 1}`
-                params.push(userData.password);
+                params.push(StringsEncryptHelper.EncryptString(userData.password));
             }
             if (userData.nickname) {
                 query += ` AND nickname = \$${params.length + 1}`
@@ -74,7 +75,7 @@ export class UserRepository {
             }
             if (newData.password) {
                 query += `, password = \$${params.length + 1}`
-                params.push(newData.password);
+                params.push(StringsEncryptHelper.EncryptString(newData.password));
             }
             if (newData.nickname) {
                 query += `, nickname = \$${params.length + 1}`
