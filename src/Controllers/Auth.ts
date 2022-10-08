@@ -42,4 +42,8 @@ export const UseAuth = (app: Express): void => {
         JWTService.InvalidateToken((req as any).token);
         res.sendStatus(200);
     });
+
+    app.get('/refresh', CheckToken, (req: Request, res: Response) => {
+        res.json(JWTService.CreateToken((req as any).tokenData.data));
+    });
 }
