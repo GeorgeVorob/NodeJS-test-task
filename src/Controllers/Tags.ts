@@ -46,7 +46,14 @@ export const UseTags = (app: Express): void => {
 
         GetTagsCase(params)
             .then((result: FullTagToUserDTO[]) => {
-                res.json(result);
+                res.json({
+                    data: result,
+                    meta: {
+                        offset: params.offset,
+                        lenght: params.length,
+                        quantity: result.length
+                    }
+                });
             })
             .catch((err: Error) => {
                 res.statusCode = 400;
