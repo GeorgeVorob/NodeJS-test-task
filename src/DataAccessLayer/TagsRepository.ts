@@ -1,5 +1,7 @@
 import e from "express";
+import { resolve } from "path";
 import { QueryResult } from "pg";
+import { TagEditInfoFromClientDTO } from "../Model/DTOs/TagEditInfoFromClientDTO";
 import { TagFromUserDTO } from "../Model/DTOs/TagFromUserDTO";
 import { TagSearchParams as TagSearchParams } from "../Model/DTOs/TagSearchParams";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
@@ -73,6 +75,42 @@ export class TagsRepository {
             .then((res: QueryResult<any>) => {
                 return res.rows as Tag[];
             })
+    }
+
+    public static async UpdateTag(tagId: number, data: TagEditInfoFromClientDTO): Promise<Tag> {
+        if (data.name != null || data.sortOrder != null) {
+            let query: string = "UPDATE tags SET";
+            let queryParams: string[] = [];
+            let firstParam = true;
+
+            if (data.name != null) {
+                firstParam = false;
+                query += ` name = \$${queryParams.length + 1}`
+                queryParams.push(data.name);
+            }
+
+            if (data.sortOrder != null) {
+                if (!firstParam) query += " ,"
+                firstParam = false;
+
+                query += ` sortorder = \$${queryParams.length + 1}`
+                queryParams.push(data.sortOrder as any);
+            }
+
+            query += ` WHERE id =\$${queryParams.length + 1}`
+            query += "RETURNING *";
+            queryParams.push(tagId as any);
+
+            return Db.Query(query, queryParams)
+                .then((res: QueryResult<any>) => {
+                    return res.rows[0] as Tag;
+                })
+        }
+
+        return Db.Query("SELECT * FROM tags WHERE id = $1", [tagId])
+            .then((res: QueryResult<any>) => {
+                return res.rows[0] as Tag;
+            });
     }
 
 }

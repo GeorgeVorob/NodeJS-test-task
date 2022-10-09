@@ -9,6 +9,7 @@ import { Tag } from "../Model/models/tag";
 import { FullTagToUserDTO } from "../Model/DTOs/FullTagToUserDTO";
 import { User } from "../Model/models/user";
 import { TagSearchParams } from "../Model/DTOs/TagSearchParams";
+import { TagEditInfoFromClientDTO } from "../Model/DTOs/TagEditInfoFromClientDTO";
 
 export const CreateTagCase = async (newTag: TagFromUserDTO, creatorUid: string): Promise<NewTagToUserDTO> => {
     if (newTag.name.length > 40) throw new Error("Tag name is too long! Max: 40.");
@@ -69,4 +70,32 @@ export const GetTagsCase = async (params: TagSearchParams): Promise<FullTagToUse
         })
 
     return retval;
+}
+
+export const EditTagByCase = async (params: TagEditInfoFromClientDTO, tagId: number, clientUid: string): Promise<FullTagToUserDTO> => {
+    let foundTag: Tag;
+    await TagsRepository.GetTagById(tagId).then((res) => {
+        if (res) foundTag = res;
+        else throw new Error("Tag with such id not found!")
+    })
+    foundTag = foundTag!;
+
+    if (foundTag.creator != clientUid) throw new Error("This tag does not belong to the user!");
+
+    let editedTag: Tag;
+    await TagsRepository.UpdateTag(tagId, { name: params.name, sortOrder: params.sortOrder }).then((res) => { editedTag = res });
+    editedTag = editedTag!;
+
+    let user: User;
+    await UserRepository.FindUserExact({ uid: clientUid }).then((res => { user = res! }));
+    user = user!;
+
+    return {
+        creator: {
+            nickname: user.nickname,
+            uid: user.uid
+        },
+        name: editedTag.name,
+        sortOrder: editedTag.sortorder
+    }
 }

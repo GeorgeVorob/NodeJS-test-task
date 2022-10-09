@@ -2,13 +2,14 @@ import { Express, Request, Response } from "express"
 import { CheckToken } from "../MIddlewares/CheckToken";
 import { FullTagToUserDTO } from "../Model/DTOs/FullTagToUserDTO";
 import { NewTagToUserDTO } from "../Model/DTOs/NewTagToUserDTO";
+import { TagEditInfoFromClientDTO } from "../Model/DTOs/TagEditInfoFromClientDTO";
 import { TagSearchParams } from "../Model/DTOs/TagSearchParams";
 import { UserFromClientDTO } from "../Model/DTOs/UserFromClientDTO";
 import { Tag } from "../Model/models/tag";
 import { JWTService } from "../Services/JWTService";
 
 import { LogInUserCase, RegisterUserCase } from "../UseCases/AuthCases";
-import { CreateTagCase, GetTagByIdCase, GetTagsCase } from "../UseCases/TagCases";
+import { CreateTagCase, EditTagByCase, GetTagByIdCase, GetTagsCase } from "../UseCases/TagCases";
 
 export const UseTags = (app: Express): void => {
     app.post('/tag', CheckToken, (req: Request, res: Response) => {
@@ -36,7 +37,6 @@ export const UseTags = (app: Express): void => {
     });
 
     app.get('/tag', CheckToken, (req: Request, res: Response) => {
-        // Небезопасно?
         let params: TagSearchParams = req.query ? {
             sortByOrder: (req.query.sortByOrder !== null && req.query.sortByOrder !== undefined) ? true : false,
             SortByName: (req.query.sortByName !== null && req.query.sortByName !== undefined) ? true : false,
@@ -54,6 +54,20 @@ export const UseTags = (app: Express): void => {
                         quantity: result.length
                     }
                 });
+            })
+            .catch((err: Error) => {
+                res.statusCode = 400;
+                res.json({ message: err.message });
+            })
+    });
+
+    app.put('/tag/:id', CheckToken, (req: Request, res: Response) => {
+        let tagId: number = parseInt(req.params.id);
+        //TODO: валидация
+        let params: TagEditInfoFromClientDTO = { name: req.body.name, sortOrder: req.body.sortOrder };
+        EditTagByCase(params, tagId, (req as any).tokenData.data)
+            .then((result: FullTagToUserDTO) => {
+                res.json(result);
             })
             .catch((err: Error) => {
                 res.statusCode = 400;
