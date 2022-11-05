@@ -41,8 +41,6 @@
 }
 ```
 
-Валидировать **password**, **email**, **nickname**
-
 RETURN:
 
 ```json
@@ -112,10 +110,6 @@ RETURN:
 
 Все поля опциональные
 
-Валидировать **password**, **email**, **nickname**
-
-Проверять на дублирование __email__ и __nickname__ в базе
-
 RETURN :
 
 ```json
@@ -130,8 +124,6 @@ RETURN :
 
   HEADER: ```Authorization: Bearer {token}```
 
-Разлогиниваем и удаляем пользователя
-
 ---
 - POST /tag
   
@@ -144,8 +136,7 @@ RETURN :
 }
 ```
 
-**sortOrder** опционально по default 0
-Проверять на дублирование __name__ в базе и максимальную длину
+**sortOrder** опционально, по default 0
 
 RETURN :
 
@@ -184,8 +175,6 @@ RETURN :
 **sortByOrder**, **offset** **SortByName**, **length** опциональны
 
 **length** количество элементов в выборке
-
-Если выбрали подход с страницами, то ипсользуйте параметры **page** и **pageSize** вместо **offset** и **length**
 
 RETURN :
 
